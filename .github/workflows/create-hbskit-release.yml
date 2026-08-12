@@ -1,0 +1,40 @@
+name: Create HBS-KIT release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create HBS-KIT zip (manifest at root)
+        run: |
+          mkdir -p release_temp
+          cp examples/hbs-kit-sample/manifest.json release_temp/manifest.json
+          mkdir -p release_temp/main_book release_temp/subbooks release_temp/metadata
+          cp -r examples/hbs-kit-sample/main_book/* release_temp/main_book/
+          cp -r examples/hbs-kit-sample/subbooks/* release_temp/subbooks/
+          cp -r examples/hbs-kit-sample/metadata/* release_temp/metadata/
+          cd release_temp && zip -r ../hbs-kit-sample.zip .
+
+      - name: Create GitHub Release v0.1
+        id: create_release
+        uses: actions/create-release@v1
+        with:
+          tag_name: v0.1
+          release_name: HBS-KIT sample v0.1
+          body: Sample HBS-KIT for Multidimensional Book demo
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload ZIP to release
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./hbs-kit-sample.zip
+          asset_name: hbs-kit-sample.zip
+          asset_content_type: application/zip
