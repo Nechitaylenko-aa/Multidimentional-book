@@ -12,11 +12,12 @@ jobs:
       - name: Create HBS-KIT zip (manifest at root)
         run: |
           mkdir -p release_temp
-          cp examples/hbs-kit-sample/manifest.json release_temp/manifest.json
+          # Use files from examples/ (existing paths in the repo)
+          cp examples/manifest.json release_temp/manifest.json
           mkdir -p release_temp/main_book release_temp/subbooks release_temp/metadata
-          cp -r examples/hbs-kit-sample/main_book/* release_temp/main_book/
-          cp -r examples/hbs-kit-sample/subbooks/* release_temp/subbooks/
-          cp -r examples/hbs-kit-sample/metadata/* release_temp/metadata/
+          cp -r examples/main_book/* release_temp/main_book/ || true
+          cp -r examples/subbooks/* release_temp/subbooks/ || true
+          cp -r examples/metadata/* release_temp/metadata/ || true
           cd release_temp && zip -r ../hbs-kit-sample.zip .
 
       - name: Create GitHub Release v0.1
