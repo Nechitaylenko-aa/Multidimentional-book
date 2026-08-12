@@ -8,12 +8,51 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Create HBS-KIT zip (manifest at root)
+      - name: Debug: show repo layout
         run: |
+          echo "=== pwd ==="
+          pwd
+          echo "=== git status ==="
+          git status --porcelain -b || true
+          echo "=== git rev-parse HEAD ==="
+          git rev-parse HEAD || true
+          echo "=== listing root ==="
+          ls -la
+          echo "=== listing examples ==="
+          ls -la examples || true
+          echo "=== listing examples tree ==="
+          ls -la examples || true
+          echo "=== try show examples/manifest.json ==="
+          if [ -f examples/manifest.json ]; then
+            echo '--- examples/manifest.json:'
+            cat examples/manifest.json
+          else
+            echo 'NO examples/manifest.json found'
+          fi
+          echo "=== try show examples/hbs-kit-sample/manifest.json ==="
+          if [ -f examples/hbs-kit-sample/manifest.json ]; then
+            echo '--- examples/hbs-kit-sample/manifest.json:'
+            cat examples/hbs-kit-sample/manifest.json
+          else
+            echo 'NO examples/hbs-kit-sample/manifest.json found'
+          fi
+
+      - name: Create HBS-KIT zip (manifest at root, from examples/)
+        run: |
+          set -xe
           mkdir -p release_temp
-          # Use files from examples/ (existing paths in the repo)
-          cp examples/manifest.json release_temp/manifest.json
+          # Prefer manifest in examples/ (existing in the repo)
+          if [ -f examples/manifest.json ]; then
+            cp examples/manifest.json release_temp/manifest.json
+          elif [ -f examples/hbs-kit-sample/manifest.json ]; then
+            cp examples/hbs-kit-sample/manifest.json release_temp/manifest.json
+          else
+            echo "ERROR: no manifest found in examples/ or examples/hbs-kit-sample/"
+            exit 2
+          fi
           mkdir -p release_temp/main_book release_temp/subbooks release_temp/metadata
           cp -r examples/main_book/* release_temp/main_book/ || true
           cp -r examples/subbooks/* release_temp/subbooks/ || true
