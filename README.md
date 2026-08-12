@@ -35,8 +35,3 @@ The attached ToR outlines:
     easy adoption.
 
  3. *A realistic MVP roadmap*for development.
-
-I am fully prepared to discuss the technical details, architecture, or 
-any questions you might have. Even if this specific idea doesn't align 
-with your current roadmap, I hope it sparks some thought about future 
-reading experiences.
