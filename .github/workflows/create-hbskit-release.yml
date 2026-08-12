@@ -11,7 +11,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Debug: show repo layout
+      - name: Debug - show repo layout
         run: |
           echo "=== pwd ==="
           pwd
@@ -22,8 +22,6 @@ jobs:
           echo "=== listing root ==="
           ls -la
           echo "=== listing examples ==="
-          ls -la examples || true
-          echo "=== listing examples tree ==="
           ls -la examples || true
           echo "=== try show examples/manifest.json ==="
           if [ -f examples/manifest.json ]; then
@@ -44,7 +42,6 @@ jobs:
         run: |
           set -xe
           mkdir -p release_temp
-          # Prefer manifest in examples/ (existing in the repo)
           if [ -f examples/manifest.json ]; then
             cp examples/manifest.json release_temp/manifest.json
           elif [ -f examples/hbs-kit-sample/manifest.json ]; then
