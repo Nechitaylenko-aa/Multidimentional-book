@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "HBS-KIT manifest",
+  "type": "object",
+  "required": ["title","books","format_version","tags_path"],
+  "properties": {
+    "title": { "type": "string" },
+    "description": { "type": "string" },
+    "format_version": { "type": "string" },
+    "tags_path": { "type": "string", "description": "Relative path to the tags JSON file inside the package" },
+    "books": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id","path","title"],
+        "properties": {
+          "id": { "type": "string" },
+          "path": { "type": "string", "description": "Relative path to the book file or directory" },
+          "title": { "type": "string" },
+          "language": { "type": "string" }
+        },
+        "additionalProperties": false
+      },
+      "minItems": 1
+    }
+  },
+  "additionalProperties": false
+}
