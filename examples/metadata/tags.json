@@ -1,0 +1,9 @@
+[
+  {
+    "id": "tag_001",
+    "main_book": { "book_id": "main", "section": "para2" },
+    "subbook": { "book_id": "sub1", "section": "para1" },
+    "description": "Theory background for main book paragraph 2",
+    "active": true
+  }
+]

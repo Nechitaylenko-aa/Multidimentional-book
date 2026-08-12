@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>HBS-KIT Preview — Multidimensional Book (demo)</title>
+  <style>
+    body { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; margin: 0; height: 100vh; display: flex; }
+    #main { width: 65%; padding: 24px; overflow: auto; border-right: 1px solid #ddd; }
+    #side { width: 35%; padding: 24px; overflow: auto; background: #fafafa; }
+    .tag-button { background: #0366d6; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; }
+    header { display:flex; align-items:baseline; gap:12px; }
+    header h1 { margin:0; font-size:18px }
+    .meta { color: #666; font-size:13px }
+    .hint { color:#444; margin-top:8px }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+  <div id="main">
+    <header>
+      <h1>HBS-KIT Preview (Demo)</h1>
+      <div class="meta">Simple static reader to demonstrate a tag opening a sub-book.</div>
+    </header>
+    <div class="hint">Click the blue button that appears in the main text to open the linked sub-book in the side panel.</div>
+    <hr />
+    <div id="main-content"></div>
+  </div>
+  <div id="side">
+    <h2 id="side-title">Sub-book</h2>
+    <div id="side-content"><em>No sub-book loaded.</em></div>
+  </div>
+
+  <!-- Embedded example manifest and tags (so preview works without a server) -->
+  <script id="manifest" type="application/json">
+  {
+    "title": "Sample Multidimensional Book (Demo)",
+    "description": "A minimal example HBS-KIT manifest for the Multidimensional Book project.",
+    "books": [
+      { "id": "main", "path": "examples/main_book/main.md", "title": "Main Book" },
+      { "id": "sub1", "path": "examples/subbooks/sub1.md", "title": "Sub-book 1: Theory" }
+    ],
+    "tags_path": "examples/metadata/tags.json",
+    "format_version": "0.1"
+  }
+  </script>
+
+  <script id="tags" type="application/json">
+  [
+    {
+      "id": "tag_001",
+      "main_book": { "book_id": "main", "section": "para2" },
+      "subbook": { "book_id": "sub1", "section": "para1" },
+      "description": "Theory background for main book paragraph 2",
+      "active": true
+    }
+  ]
+  </script>
+
+  <script id="main-md" type="text/plain">
+# Sample Main Book
+
+This is a very short demonstration of the Multidimensional Book concept.
+
+Paragraph 1 — introductory text. Nothing special here.
+
+Paragraph 2 — this paragraph contains a concept that has deeper theory attached. [tag:tag_001]
+
+Paragraph 3 — concluding remarks and pointers.
+  </script>
+
+  <script id="sub1-md" type="text/plain">
+# Sub-book 1: Theory
+
+This short sub-book explains the deeper theory referenced from the main book.
+
+Paragraph 1 — detailed explanation of the concept referenced in main book paragraph 2.
+
+You can reuse this sub-book across multiple main texts.
+  </script>
+
+  <script>
+    // Tiny preview logic: render main, replace tag markers with buttons, open subbook on click
+    const manifest = JSON.parse(document.getElementById('manifest').textContent);
+    const tags = JSON.parse(document.getElementById('tags').textContent);
+    const mainMd = document.getElementById('main-md').textContent.trim();
+    const sub1Md = document.getElementById('sub1-md').textContent.trim();
+
+    function renderMain() {
+      // Replace tag markers [tag:ID] with a button element
+      const html = marked.parse(mainMd.replace(/\[tag:(.+?)\]/g, (m, id) => {
+        return `<button class="tag-button" data-tag="${id}">Open linked sub-book</button>`;
+      }));
+      document.getElementById('main-content').innerHTML = html;
+
+      // Attach click handlers to tag buttons
+      document.querySelectorAll('.tag-button').forEach(btn => {
+        btn.addEventListener('click', onTagClick);
+      });
+    }
+
+    function onTagClick(e) {
+      const id = e.currentTarget.getAttribute('data-tag');
+      const tag = tags.find(t => t.id === id);
+      if (!tag) {
+        alert('Tag not found: ' + id);
+        return;
+      }
+      // For this demo we only support sub1
+      if (tag.subbook.book_id === 'sub1') {
+        document.getElementById('side-title').textContent = 'Sub-book: ' + manifest.books.find(b=>b.id==='sub1').title;
+        document.getElementById('side-content').innerHTML = marked.parse(sub1Md);
+      } else {
+        document.getElementById('side-content').innerHTML = '<em>Sub-book not available in demo.</em>';
+      }
+    }
+
+    renderMain();
+  </script>
+</body>
+</html>

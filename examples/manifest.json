@@ -1,0 +1,10 @@
+{
+  "title": "Sample Multidimensional Book (Demo)",
+  "description": "A minimal example HBS-KIT manifest for the Multidimensional Book project.",
+  "books": [
+    { "id": "main", "path": "main_book/main.md", "title": "Main Book" },
+    { "id": "sub1", "path": "subbooks/sub1.md", "title": "Sub-book 1: Theory" }
+  ],
+  "tags_path": "metadata/tags.json",
+  "format_version": "0.1"
+}
