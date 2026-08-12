@@ -16,22 +16,32 @@ sections in sub-books.
     deepen their understanding on their own terms, returning to the main
     text seamlessly when ready.
 
-this concept and a detailed technical specification (attached)  is
-*completely free of any claims*. Free of licensing fees, 
-royalties, or exclusive rights. 
+This concept and a detailed technical specification (attached) is
+*completely free of any claims*. Free of licensing fees, royalties, or exclusive rights.
 
-I've coined the working name *"HBS-KIT"*(Hyperdimensional Book System 
-Kit) for the proposed open format — a simple ZIP archive containing JSON 
-metadata and Markdown text files.
-
+I've coined the working name *"HBS-KIT"* (Hyperdimensional Book System Kit) for the proposed open format — a simple ZIP archive containing JSON metadata and Markdown text files.
 
 The attached ToR outlines:
 
- 1. *Two core applications:*A /Writer/for authors to structure and tag
-    their work, and a /Reader/for users to experience the
-    multidimensional format.
+ 1. *Two core applications:* A /Writer/ for authors to structure and tag their work, and a /Reader/ for users to experience the multidimensional format.
 
- 2. *A suggested open data format (HBS-KIT)*using JSON and Markdown for
-    easy adoption.
+ 2. *A suggested open data format (HBS-KIT)* using JSON and Markdown for easy adoption.
 
- 3. *A realistic MVP roadmap*for development.
+ 3. *A realistic MVP roadmap* for development.
+
+Attribution
+-----------
+Based on concept by Artem Nechitaylenko.
+
+No royalties are requested. If you use or adapt this format, a short credit like "Based on concept by Artem Nechitaylenko" in your About or README is appreciated but not required.
+
+Licensing
+---------
+- Content (text, examples, documentation): Creative Commons Attribution 4.0 International (CC BY 4.0). See LICENSE-CONTENT.md for details.
+- Code (scripts, workflows, tooling): MIT License. See LICENSE for details.
+
+If you prefer a different license for contributions, please discuss it in an issue.
+
+Contact / Contributions
+-----------------------
+Contributions are welcome. Open an issue or submit a pull request. If you redistribute or publish work derived from this project, please keep the attribution note in your About/README as a courtesy.
