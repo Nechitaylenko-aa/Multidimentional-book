@@ -2,7 +2,10 @@ name: Create HBS-KIT release
 
 on:
   workflow_dispatch:
-
+  
+permissions:
+  contents: write
+  
 jobs:
   build-and-release:
     runs-on: ubuntu-latest
