@@ -1,7 +1,5 @@
 # Sub-book 1: Theory
 
-This short sub-book explains the deeper theory referenced from the main book.
+Paragraph 1 — This sub-book explains the theoretical background for Concept A. It includes definitions, formal statements, and intuition.
 
-Paragraph 1 — detailed explanation of the concept referenced in main book paragraph 2.
-
-You can reuse this sub-book across multiple main texts.
+Paragraph 2 — A short mathematical derivation illustrating the main theorem.

@@ -3,42 +3,56 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>HBS-KIT Preview — Multidimensional Book (demo)</title>
+  <title>HBS-KIT Preview — Multidimensional Book (scroll-driven demo)</title>
   <style>
+    :root{--side-width:25vw}
     body { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; margin: 0; height: 100vh; display: flex; }
-    #main { width: 65%; padding: 24px; overflow: auto; border-right: 1px solid #ddd; }
-    #side { width: 35%; padding: 24px; overflow: auto; background: #fafafa; }
-    .tag-button { background: #0366d6; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; }
+    #main { width: calc(100% - var(--side-width)); padding: 32px; overflow: auto; border-right: 1px solid #e6e6e6; }
+    #side { width: var(--side-width); padding: 16px; overflow: auto; background: #fafafa; position: relative; }
+    .panel-container { position: sticky; top: 16px; max-height: calc(100vh - 32px); overflow:auto; }
+    .panel { background: white; border-radius: 8px; box-shadow: 0 6px 18px rgba(20,20,30,0.06); padding: 14px; margin-bottom: 12px; transform: translateX(18px); opacity: 0; transition: transform 360ms cubic-bezier(.2,.9,.25,1), opacity 360ms ease; }
+    .panel.show { transform: translateX(0); opacity: 1; }
+    .panel h3 { margin:0 0 8px 0; font-size:15px }
+    .panel .source { font-size:12px; color:#666; margin-bottom:8px }
+    .tag-marker { display:block; height:1px; width:1px; overflow:hidden; position:relative; }
     header { display:flex; align-items:baseline; gap:12px; }
     header h1 { margin:0; font-size:18px }
     .meta { color: #666; font-size:13px }
     .hint { color:#444; margin-top:8px }
+    .para { margin: 28px 0; line-height:1.6 }
+    /* Small visual helper for debugging markers (hidden by default) */
+    .marker-dot { width:8px; height:8px; background:#0366d6; border-radius:50%; display:inline-block; margin-left:8px; vertical-align:middle; }
+    @media (max-width:800px) { #main { padding:18px } #side { display:none } }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
   <div id="main">
     <header>
-      <h1>HBS-KIT Preview (Demo)</h1>
-      <div class="meta">Simple static reader to demonstrate a tag opening a sub-book.</div>
+      <h1>HBS-KIT Preview — Scroll-driven demo</h1>
+      <div class="meta">Long main text with dynamic sub-book panels appearing as you scroll.</div>
     </header>
-    <div class="hint">Click the blue button that appears in the main text to open the linked sub-book in the side panel.</div>
+    <div class="hint">Scroll the main text. When you reach a tagged passage, the linked sub-book panel will slide in on the right (stacked panels supported).</div>
     <hr />
     <div id="main-content"></div>
   </div>
   <div id="side">
-    <h2 id="side-title">Sub-book</h2>
-    <div id="side-content"><em>No sub-book loaded.</em></div>
+    <div class="panel-container" id="panel-container">
+      <h2 id="side-title">Loaded Context</h2>
+      <div id="side-panels"></div>
+    </div>
   </div>
 
-  <!-- Embedded example manifest and tags (so preview works without a server) -->
+  <!-- Embedded example manifest and tags -->
   <script id="manifest" type="application/json">
   {
     "title": "Sample Multidimensional Book (Demo)",
-    "description": "A minimal example HBS-KIT manifest for the Multidimensional Book project.",
+    "description": "Scroll-driven demo for the Multidimensional Book project.",
     "books": [
       { "id": "main", "path": "examples/main_book/main.md", "title": "Main Book" },
-      { "id": "sub1", "path": "examples/subbooks/sub1.md", "title": "Sub-book 1: Theory" }
+      { "id": "sub1", "path": "examples/subbooks/sub1.md", "title": "Sub-book 1: Theory" },
+      { "id": "sub2", "path": "examples/subbooks/sub2.md", "title": "Sub-book 2: Deep Dive" },
+      { "id": "sub3", "path": "examples/subbooks/sub3.md", "title": "Sub-book 3: Example Applications" }
     ],
     "tags_path": "examples/metadata/tags.json",
     "format_version": "0.1"
@@ -47,75 +61,182 @@
 
   <script id="tags" type="application/json">
   [
-    {
-      "id": "tag_001",
-      "main_book": { "book_id": "main", "section": "para2" },
-      "subbook": { "book_id": "sub1", "section": "para1" },
-      "description": "Theory background for main book paragraph 2",
-      "active": true
-    }
+    { "id": "tag_001", "main_book": { "book_id": "main", "section": "para3" }, "subbook": { "book_id": "sub1", "section": "para1" }, "description": "Background theory for concept A", "active": true },
+    { "id": "tag_002", "main_book": { "book_id": "main", "section": "para6" }, "subbook": { "book_id": "sub2", "section": "para1" }, "description": "Detailed proof sketch for claim B", "active": true },
+    { "id": "tag_003", "main_book": { "book_id": "main", "section": "para9" }, "subbook": { "book_id": "sub3", "section": "para1" }, "description": "Applied examples for technique C", "active": true }
   ]
   </script>
 
   <script id="main-md" type="text/plain">
-# Sample Main Book
+# Sample Main Book — Long Demo
 
-This is a very short demonstration of the Multidimensional Book concept.
+This long demonstration simulates a multi-screen main text. Scroll slowly and watch how contextual sub-books appear at predefined points.
 
-Paragraph 1 — introductory text. Nothing special here.
+Paragraph 1 — an opening overview that sets the stage. The reader learns the high-level goal of the chapter.
 
-Paragraph 2 — this paragraph contains a concept that has deeper theory attached. [tag:tag_001]
+Paragraph 2 — a short narrative that connects the overview to concrete examples, preparing the reader for the first deep concept.
 
-Paragraph 3 — concluding remarks and pointers.
+Paragraph 3 — Concept A is presented here. The main text remains concise; an invisible tag loads theoretical background in a sub-book.
+
+Paragraph 4 — discussion and small clarifying remark to bridge to the next idea.
+
+Paragraph 5 — a short anecdote and an example to make the concept memorable.
+
+Paragraph 6 — Claim B: a technical claim that benefits from a proof sketch or deeper derivation in a sub-book.
+
+Paragraph 7 — implications of Claim B and how it affects the overall design choices.
+
+Paragraph 8 — transitional material and a brief summary of earlier points.
+
+Paragraph 9 — Technique C: an applied technique used in examples; a linked sub-book contains worked examples and code snippets.
+
+Paragraph 10 — recommendations for practitioners and notes about common pitfalls.
+
+Paragraph 11 — closing reflections and pointers to further reading in separate sub-books.
+
+Paragraph 12 — final remarks and an invitation for feedback.
   </script>
 
   <script id="sub1-md" type="text/plain">
 # Sub-book 1: Theory
 
-This short sub-book explains the deeper theory referenced from the main book.
+Paragraph 1 — This sub-book explains the theoretical background for Concept A. It includes definitions, formal statements, and intuition.
 
-Paragraph 1 — detailed explanation of the concept referenced in main book paragraph 2.
+Paragraph 2 — A short mathematical derivation illustrating the main theorem.
+  </script>
 
-You can reuse this sub-book across multiple main texts.
+  <script id="sub2-md" type="text/plain">
+# Sub-book 2: Deep Dive
+
+Paragraph 1 — This sub-book contains a proof sketch and derivation for Claim B. It is aimed at readers who want to verify the reasoning.
+
+Paragraph 2 — Notes on assumptions and limits of the proof.
+  </script>
+
+  <script id="sub3-md" type="text/plain">
+# Sub-book 3: Example Applications
+
+Paragraph 1 — Worked examples and step-by-step applications of Technique C in sample scenarios.
+
+Paragraph 2 — A code snippet (pseudocode) and results discussion.
   </script>
 
   <script>
-    // Tiny preview logic: render main, replace tag markers with buttons, open subbook on click
     const manifest = JSON.parse(document.getElementById('manifest').textContent);
     const tags = JSON.parse(document.getElementById('tags').textContent);
     const mainMd = document.getElementById('main-md').textContent.trim();
     const sub1Md = document.getElementById('sub1-md').textContent.trim();
+    const sub2Md = document.getElementById('sub2-md').textContent.trim();
+    const sub3Md = document.getElementById('sub3-md').textContent.trim();
 
-    function renderMain() {
-      // Replace tag markers [tag:ID] with a button element
-      const html = marked.parse(mainMd.replace(/\[tag:(.+?)\]/g, (m, id) => {
-        return `<button class="tag-button" data-tag="${id}">Open linked sub-book</button>`;
-      }));
-      document.getElementById('main-content').innerHTML = html;
+    // Map subbook id -> content (embedded demo). In a full implementation we would load by path.
+    const subContents = {
+      'sub1': sub1Md,
+      'sub2': sub2Md,
+      'sub3': sub3Md
+    };
 
-      // Attach click handlers to tag buttons
-      document.querySelectorAll('.tag-button').forEach(btn => {
-        btn.addEventListener('click', onTagClick);
+    // Replace paragraph separators with <p class="para"> blocks and insert invisible markers for tags
+    function buildMainHtml(md) {
+      // Split paragraphs on blank lines
+      const parts = md.split(/\n\n+/);
+      const htmlParts = parts.map((p, idx) => {
+        const paraIndex = idx + 1; // 1-based
+        // Replace [tag:ID] markers with a marker span
+        const replaced = p.replace(/\[tag:(.+?)\]/g, (m, id) => {
+          return `<span class="tag-marker" data-tag="${id}" data-para="para${paraIndex}" aria-hidden="true"></span>`;
+        });
+        // Render paragraph markdown inline
+        const rendered = marked.parseInline(replaced);
+        return `<div class="para" data-para="para${paraIndex}">${rendered}</div>`;
+      });
+      return htmlParts.join('\n');
+    }
+
+    // For demo we insert tag markers into specific paragraphs (matching examples/metadata/tags.json)
+    // We'll programmatically add [tag:...] markers to the main text so the markdown above will pick them up
+    let demoMd = mainMd;
+    // Insert markers: after paragraph 3, 6, 9 we add explicit [tag:tag_00x]
+    demoMd = demoMd.replace(/(Paragraph 3[\s\S]*?\.)/,'$1 [tag:tag_001]');
+    demoMd = demoMd.replace(/(Paragraph 6[\s\S]*?\.)/,'$1 [tag:tag_002]');
+    demoMd = demoMd.replace(/(Paragraph 9[\s\S]*?\.)/,'$1 [tag:tag_003]');
+
+    document.getElementById('main-content').innerHTML = buildMainHtml(demoMd);
+
+    // Keep track of active panels by tag id
+    const activePanels = new Map();
+    const sidePanels = document.getElementById('side-panels');
+
+    function createPanelForTag(tagObj) {
+      const id = tagObj.id;
+      if (activePanels.has(id)) return;
+      const panel = document.createElement('div');
+      panel.className = 'panel';
+      panel.setAttribute('data-tag', id);
+      const title = manifest.books.find(b => b.id === tagObj.subbook.book_id)?.title || 'Sub-book';
+      panel.innerHTML = `<h3>${title}</h3><div class="source">${tagObj.description}</div><div class="content">Loading...</div>`;
+      sidePanels.insertBefore(panel, sidePanels.firstChild);
+      // Force layout then add show class for animation
+      requestAnimationFrame(()=> panel.classList.add('show'));
+      activePanels.set(id, panel);
+
+      // Load content (for demo we use embedded subContents)
+      const contentMd = subContents[tagObj.subbook.book_id] || '*Sub-book content not available.*';
+      panel.querySelector('.content').innerHTML = marked.parse(contentMd);
+    }
+
+    function removePanelForTag(id) {
+      const panel = activePanels.get(id);
+      if (!panel) return;
+      panel.classList.remove('show');
+      // Wait for transition then remove
+      panel.addEventListener('transitionend', ()=> panel.remove(), { once: true });
+      activePanels.delete(id);
+    }
+
+    // Check markers on scroll — show panel when marker is within top 25% of viewport
+    const markers = Array.from(document.querySelectorAll('.tag-marker'));
+
+    function checkMarkers() {
+      const topThreshold = window.innerHeight * 0.25;
+      // determine which tags should be active (markers with top <= threshold and bottom >= 0)
+      const toActivate = new Set();
+      markers.forEach(m => {
+        const rect = m.getBoundingClientRect();
+        const id = m.dataset.tag;
+        // If marker top is near or above the threshold (it has entered the focal zone)
+        if (rect.top <= topThreshold && rect.bottom >= 0) {
+          toActivate.add(id);
+        }
+      });
+      // Activate newly visible
+      toActivate.forEach(id => {
+        const tagObj = tags.find(t => t.id === id);
+        if (tagObj) createPanelForTag(tagObj);
+      });
+      // Deactivate panels whose tags are no longer in toActivate
+      Array.from(activePanels.keys()).forEach(id => {
+        if (!toActivate.has(id)) removePanelForTag(id);
       });
     }
 
-    function onTagClick(e) {
-      const id = e.currentTarget.getAttribute('data-tag');
-      const tag = tags.find(t => t.id === id);
-      if (!tag) {
-        alert('Tag not found: ' + id);
-        return;
+    // Throttle scroll checks
+    let ticking = false;
+    document.getElementById('main').addEventListener('scroll', ()=>{
+      if (!ticking) {
+        window.requestAnimationFrame(()=>{ checkMarkers(); ticking = false; });
+        ticking = true;
       }
-      // For this demo we only support sub1
-      if (tag.subbook.book_id === 'sub1') {
-        document.getElementById('side-title').textContent = 'Sub-book: ' + manifest.books.find(b=>b.id==='sub1').title;
-        document.getElementById('side-content').innerHTML = marked.parse(sub1Md);
-      } else {
-        document.getElementById('side-content').innerHTML = '<em>Sub-book not available in demo.</em>';
-      }
-    }
+    });
+    // Also run on resize and initial load
+    window.addEventListener('resize', checkMarkers);
+    checkMarkers();
 
-    renderMain();
+    // For accessibility: allow keyboard to focus paragraphs and trigger panels
+    document.querySelectorAll('.para').forEach(p => {
+      p.setAttribute('tabindex','0');
+      p.addEventListener('focus', ()=> checkMarkers());
+    });
   </script>
 </body>
 </html>

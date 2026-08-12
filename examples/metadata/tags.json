@@ -1,9 +1,5 @@
 [
-  {
-    "id": "tag_001",
-    "main_book": { "book_id": "main", "section": "para2" },
-    "subbook": { "book_id": "sub1", "section": "para1" },
-    "description": "Theory background for main book paragraph 2",
-    "active": true
-  }
+  { "id": "tag_001", "main_book": { "book_id": "main", "section": "para3" }, "subbook": { "book_id": "sub1", "section": "para1" }, "description": "Background theory for Concept A", "active": true },
+  { "id": "tag_002", "main_book": { "book_id": "main", "section": "para6" }, "subbook": { "book_id": "sub2", "section": "para1" }, "description": "Proof sketch for Claim B", "active": true },
+  { "id": "tag_003", "main_book": { "book_id": "main", "section": "para9" }, "subbook": { "book_id": "sub3", "section": "para1" }, "description": "Applied examples for Technique C", "active": true }
 ]
